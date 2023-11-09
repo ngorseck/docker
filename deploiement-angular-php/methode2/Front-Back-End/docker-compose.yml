@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  front:
+    image: front-angular-animal:0.0.1
+    container_name: container-front-angular-animal
+    build:
+      context: ./angular/
+      dockerfile: Dockerfile
+    ports:
+      - 82:80
+  back:
+    image: back-angular-animal:0.0.1
+    container_name: container-back-angular-animal
+    build:
+      context: ./web-server-php/
+      dockerfile: Dockerfile
+    ports:
+      - 8081:80
+#docker compose up -d
