@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  mysql-bank_credit:
+    image: mysql:8.0
+    container_name: container_mysql_bank_credit
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bank_credit
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - 8085:80
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      PMA_HOST: mysql-bank_credit
+      PMA_USER: user
+      PMA_PASSWORD: user
+    depends_on:
+      - mysql-bank_credit
+    restart: unless-stopped
+
+  app-bank_credit-backend:
+    image: app-bank_credit
+    container_name: container_bank_credit
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      spring.datasource.url: jdbc:mysql://mysql-bank_credit:3306/bank_credit?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      spring.datasource.username: user
+      spring.datasource.password: user
+      JAVA_TOOL_OPTIONS: -Xss256K -XX:ReservedCodeCacheSize=64M -XX:MaxMetaspaceSize=128M -Xmx64M
+    depends_on:
+      - mysql-bank_credit
+    links:
+      - mysql-bank_credit
+
+volumes:
+  mysql_data:
+    driver: local
