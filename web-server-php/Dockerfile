@@ -1,4 +1,4 @@
-#Une autre possibilite pour les web servers, pour le deploiement de site dapplications
+#Une autre possibilite pour les web servers, pour le deploiement de site web
 FROM php:7.2-apache
 COPY . /var/www/html/
 #docker build -t gestionuser-angular:v1 .
