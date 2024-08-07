@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  front:
+    image: webapp:0.0.1
+    container_name: container-webapp
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 83:80
+#docker compose up -d
